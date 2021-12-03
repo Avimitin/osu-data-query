@@ -11,6 +11,7 @@ pub struct User {
     level: String,
     accuracy: String,
     country: String,
+    pp_raw: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -34,9 +35,7 @@ pub async fn get_users<'a>(k: &'a str, u: &'a str) -> Result<Vec<User>> {
         .await?
         .json::<Response>()
         .await
-        .with_context(||{
-            format!("Request {} fail", url.as_str())
-        })?;
+        .with_context(|| format!("Request {} fail", url.as_str()))?;
 
     match resp {
         Response::Error(e) => Err(anyhow!("{}", e.error)),
