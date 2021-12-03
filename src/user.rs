@@ -14,6 +14,20 @@ pub struct User {
     pp_raw: String,
 }
 
+impl std::fmt::Display for User {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, 
+"User {}'s data:
+PC:    {}
+RANK:  {}
+LEVEL: {}
+ACC:   {}
+PP:    {}
+",
+            self.username, self.playcount, self.pp_rank, self.level, self.accuracy, self.pp_raw)
+    }
+}
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Error {
     error: String,
