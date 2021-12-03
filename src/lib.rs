@@ -24,3 +24,5 @@ pub async fn get_beatmaps<'a>(
         beatmaps::Response::ErrorResp(e) => Err(anyhow!("{}", e.err())),
     }
 }
+
+pub use user::get_users;
