@@ -2,8 +2,6 @@
 pub mod beatmaps;
 pub mod user;
 
-pub mod response;
-
 pub mod config;
 pub use config::AppConfig;
 
