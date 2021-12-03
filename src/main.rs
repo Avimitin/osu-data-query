@@ -22,7 +22,12 @@ async fn main() -> Result<(), Error> {
         }
         CommandLineOption::GetUser { user } => {
             let resp = get_users(&cfg.api_key, &user).await?;
-            println!("{:?}", resp);
+            if resp.len() == 0 {
+                bail!("No result for user: {}", user)
+            }
+            for u in resp {
+                println!("{}", u);
+            }
         }
     }
 
