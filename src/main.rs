@@ -29,6 +29,22 @@ async fn main() -> Result<(), Error> {
                 println!("{}", u);
             }
         }
+        CommandLineOption::DiffUser {users} => {
+            let a = get_users(&cfg.api_key, &users[0]).await?;
+            if a.len() == 0 {
+                bail!("No result for user: {}", users[0])
+            }
+
+            let b = get_users(&cfg.api_key, &users[1]).await?;
+            if b.len() == 0 {
+                bail!("No result for user: {}", users[1])
+            }
+            // use the first result to compare
+            let a = &a[0];
+            let b = &b[0];
+            let output = vec![a, b];
+            println!("{}", tabled::Table::new(output).to_string());
+        }
     }
 
     Ok(())
@@ -56,4 +72,10 @@ enum CommandLineOption {
         #[structopt(short = "u", long, default_value = "")]
         user: String,
     },
+
+    #[structopt(about = "Diff two user")]
+    DiffUser {
+        #[structopt(required = true, min_values = 2)]
+        users: Vec<String>,
+    }
 }

@@ -1,8 +1,9 @@
 use anyhow::{anyhow, Context, Result};
 use reqwest::{get, Url};
 use serde::{Deserialize, Serialize};
+use tabled::Tabled;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Tabled)]
 pub struct User {
     user_id: String,
     username: String,
