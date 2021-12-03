@@ -1,6 +1,6 @@
-use serde::{Serialize, Deserialize};
 use anyhow::{Context, Result};
 use reqwest::Url;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BeatMap {
@@ -42,7 +42,7 @@ pub struct BeatmapQuery<'a> {
 
 impl<'a> std::default::Default for BeatmapQuery<'a> {
     fn default() -> Self {
-        BeatmapQuery{
+        BeatmapQuery {
             key: "",
             mode: "0",
             set: "",
@@ -52,10 +52,18 @@ impl<'a> std::default::Default for BeatmapQuery<'a> {
 }
 
 impl BeatmapQuery<'_> {
-    pub fn new<'a>(key: &'a str, mode: &'a str, set: &'a str, beatmap: &'a str) -> BeatmapQuery<'a> {
+    pub fn new<'a>(
+        key: &'a str,
+        mode: &'a str,
+        set: &'a str,
+        beatmap: &'a str,
+    ) -> BeatmapQuery<'a> {
         return BeatmapQuery {
-            key, mode, set, beatmap,
-        }
+            key,
+            mode,
+            set,
+            beatmap,
+        };
     }
 }
 
