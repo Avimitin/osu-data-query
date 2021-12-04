@@ -80,12 +80,13 @@ pub async fn get_beatmaps(qry: BeatmapQuery<'_>) -> Result<Response> {
         params.push(("m", qry.mode));
     }
 
-    if qry.set.len() != 0 {
-        params.push(("s", qry.set));
-    }
-
     if qry.beatmap.len() != 0 {
         params.push(("b", qry.beatmap));
+    }
+
+    // If beatmap id is not provided, try to use set id
+    if qry.beatmap.len() == 0 && qry.set.len() != 0 {
+        params.push(("s", qry.set));
     }
 
     let url = Url::parse_with_params(&beatmap_api_url, &params)
