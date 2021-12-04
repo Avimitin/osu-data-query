@@ -13,7 +13,13 @@ async fn main() -> Result<(), Error> {
             mode,
             beatmap_set,
             beatmap_id,
+            full_url,
         } => {
+            if full_url != "" {
+                println!("{:#?}", get_beatmaps_from_link(&cfg.api_key, &full_url).await?);
+                return Ok(());
+            }
+
             if beatmap_set == "" && beatmap_id == "" {
                 bail!("You need at lease give one argument about the song")
             }
@@ -66,6 +72,9 @@ enum CommandLineOption {
 
         #[structopt(short = "b", long, default_value = "")]
         beatmap_id: String,
+
+        #[structopt(long, default_value = "", about = "Get information from link")]
+        full_url: String,
     },
 
     #[structopt(alias = "gu", about = "Get user information")]
