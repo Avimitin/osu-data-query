@@ -1,5 +1,5 @@
 use anyhow::{bail, Error};
-use osu_query::{get_beatmaps, get_users, AppConfig};
+use osu_query::prelude::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
