@@ -4,6 +4,7 @@ use osu_query::prelude::*;
 #[tokio::main]
 async fn main() -> Result<(), Error> {
     let opt = CommandLineOption::from_args();
+    pretty_env_logger::init();
 
     let cfg: AppConfig = confy::load("osu-query")?;
 
