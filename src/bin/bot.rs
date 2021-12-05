@@ -1,9 +1,9 @@
-use teloxide::{prelude::*, utils::command::BotCommand};
-use osu_query::prelude::*;
-use std::error::Error;
+use anyhow::{Context, Result};
 use lazy_static::lazy_static;
+use osu_query::prelude::*;
+use teloxide::{prelude::*, utils::command::BotCommand};
 
-lazy_static!{
+lazy_static! {
     static ref APP_CONFIG: AppConfig = confy::load("osu-query").unwrap();
 }
 
@@ -16,16 +16,25 @@ enum Command {
     GetBeatmap(String),
 }
 
-async fn answer(
-    cx: UpdateWithCx<AutoSend<Bot>, Message>,
-    command: Command,
-) -> Result<(), Box<dyn Error + Send + Sync>> {
+type Cxm = UpdateWithCx<AutoSend<Bot>, Message>;
+
+async fn get_beatmap(cx: &Cxm, link: &str) -> Result<()> {
+    let bmps = get_beatmaps_from_link(&APP_CONFIG.api_key, link).await?;
+    cx.answer(format!("{:#?}", bmps))
+        .await
+        .with_context(|| format!("Fail to send beatmaps back"))?;
+    Ok(())
+}
+
+async fn print_help(cx: &Cxm) -> Result<()> {
+    cx.answer(Command::descriptions()).await?;
+    Ok(())
+}
+
+async fn answer(cx: Cxm, command: Command) -> Result<()> {
     match command {
-        Command::Help => cx.answer(Command::descriptions()).await?,
-        Command::GetBeatmap(link) => {
-            let bmps = get_beatmaps_from_link(&APP_CONFIG.api_key, &link).await?;
-            cx.answer(format!("{:#?}", bmps)).await?
-        }
+        Command::Help => print_help(&cx).await?,
+        Command::GetBeatmap(link) => get_beatmap(&cx, &link).await?,
     };
 
     Ok(())
