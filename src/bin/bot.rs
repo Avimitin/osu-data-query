@@ -1,6 +1,11 @@
 use teloxide::{prelude::*, utils::command::BotCommand};
-
+use osu_query::prelude::*;
 use std::error::Error;
+use lazy_static::lazy_static;
+
+lazy_static!{
+    static ref APP_CONFIG: AppConfig = confy::load("osu-query").unwrap();
+}
 
 #[derive(BotCommand)]
 #[command(rename = "lowercase", description = "These commands are supported:")]
@@ -17,8 +22,9 @@ async fn answer(
 ) -> Result<(), Box<dyn Error + Send + Sync>> {
     match command {
         Command::Help => cx.answer(Command::descriptions()).await?,
-        Command::GetBeatmap(_link) => {
-            cx.answer(format!("")).await?
+        Command::GetBeatmap(link) => {
+            let bmps = get_beatmaps_from_link(&APP_CONFIG.api_key, &link).await?;
+            cx.answer(format!("{:#?}", bmps)).await?
         }
     };
 
