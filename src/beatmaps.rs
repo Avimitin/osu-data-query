@@ -4,14 +4,14 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BeatMap {
-    beatmapset_id: String,
-    beatmap_id: String,
-    artist: String,
-    artist_unicode: String,
-    title: String,
-    title_unicode: String,
+    pub beatmapset_id: String,
+    pub beatmap_id: String,
+    pub artist: String,
+    pub artist_unicode: String,
+    pub title: String,
+    pub title_unicode: String,
     #[serde(rename = "difficultyrating")]
-    stars: String,
+    pub stars: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]

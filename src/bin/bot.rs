@@ -1,6 +1,6 @@
 use anyhow::{Context, Result};
 use lazy_static::lazy_static;
-use osu_query::prelude::*;
+use osu_query::{beatmaps::BeatMap, prelude::*};
 use teloxide::{prelude::*, utils::command::BotCommand};
 
 lazy_static! {
@@ -18,19 +18,38 @@ enum Command {
 
 type Cxm = UpdateWithCx<AutoSend<Bot>, Message>;
 
+fn pretty_beatmap_style(bmp: &Vec<BeatMap>) -> String {
+    if bmp.len() < 1 {
+        return String::from("No beatmap");
+    }
+
+    // Use the first map
+    format!(
+        "🎵 Beatmap Title: {}\n🤵 Artist: {}\n🔍 Set ID: {}\n⭐️ Difficulty: {}\n📍 BID: {}",
+        bmp[0].title_unicode,
+        bmp[0].artist_unicode,
+        bmp[0].beatmapset_id,
+        bmp[0].stars,
+        bmp[0].beatmap_id,
+    )
+}
+
 async fn get_beatmap(cx: &Cxm, link: &str) -> Result<()> {
-    let msg = cx.answer(format!("Searching information for {}", link))
+    let msg = cx
+        .answer(format!("Searching information for {}", link))
         .await
         .with_context(|| format!("Fail to send get beatmap response"))?;
 
     match get_beatmaps_from_link(&APP_CONFIG.api_key, link).await {
         Ok(bmp) => {
-            cx.requester.edit_message_text(msg.chat_id(), msg.id, format!("{:#?}", bmp))
+            cx.requester
+                .edit_message_text(msg.chat_id(), msg.id, pretty_beatmap_style(&bmp))
                 .await
                 .with_context(|| format!("Fail to send beatmaps information back"))?;
         }
         Err(e) => {
-            cx.requester.edit_message_text(msg.chat_id(), msg.id, format!("{}", e))
+            cx.requester
+                .edit_message_text(msg.chat_id(), msg.id, format!("{}", e))
                 .await
                 .with_context(|| format!("Fail to send beatmaps information back"))?;
         }
