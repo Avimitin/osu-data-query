@@ -829,6 +829,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "confy",
+ "lazy_static",
  "log",
  "pretty_env_logger",
  "regex",
