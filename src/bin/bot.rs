@@ -19,10 +19,23 @@ enum Command {
 type Cxm = UpdateWithCx<AutoSend<Bot>, Message>;
 
 async fn get_beatmap(cx: &Cxm, link: &str) -> Result<()> {
-    let bmps = get_beatmaps_from_link(&APP_CONFIG.api_key, link).await?;
-    cx.answer(format!("{:#?}", bmps))
+    let msg = cx.answer(format!("Searching information for {}", link))
         .await
-        .with_context(|| format!("Fail to send beatmaps back"))?;
+        .with_context(|| format!("Fail to send get beatmap response"))?;
+
+    match get_beatmaps_from_link(&APP_CONFIG.api_key, link).await {
+        Ok(bmp) => {
+            cx.requester.edit_message_text(msg.chat_id(), msg.id, format!("{:#?}", bmp))
+                .await
+                .with_context(|| format!("Fail to send beatmaps information back"))?;
+        }
+        Err(e) => {
+            cx.requester.edit_message_text(msg.chat_id(), msg.id, format!("{}", e))
+                .await
+                .with_context(|| format!("Fail to send beatmaps information back"))?;
+        }
+    }
+
     Ok(())
 }
 
