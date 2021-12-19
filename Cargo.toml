@@ -15,4 +15,4 @@ log = "0.4"
 regex = "1"
 
 [workspace]
-members = ["query_cli", "osu_tg_bot"]
+members = ["query_cli", "osu_tg_bot", "server"]
