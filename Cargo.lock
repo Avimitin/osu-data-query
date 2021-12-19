@@ -828,15 +828,24 @@ name = "osu_query"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "confy",
- "lazy_static",
  "log",
- "pretty_env_logger",
  "regex",
  "reqwest",
  "serde",
- "structopt",
  "tabled",
+ "tokio",
+]
+
+[[package]]
+name = "osu_tg_bot"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "confy",
+ "lazy_static",
+ "log",
+ "osu_query",
+ "pretty_env_logger",
  "teloxide",
  "tokio",
 ]
@@ -990,6 +999,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ba508cc11742c0dc5c1659771673afbab7a0efab23aa17e854cbab0837ed0b43"
 dependencies = [
  "unicode-xid",
+]
+
+[[package]]
+name = "query_cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "confy",
+ "log",
+ "osu_query",
+ "structopt",
+ "tabled",
+ "tokio",
 ]
 
 [[package]]
