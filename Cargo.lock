@@ -1009,6 +1009,7 @@ dependencies = [
  "confy",
  "log",
  "osu_query",
+ "pretty_env_logger",
  "structopt",
  "tabled",
  "tokio",
