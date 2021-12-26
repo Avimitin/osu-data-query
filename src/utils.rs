@@ -5,17 +5,11 @@ pub fn parse_from_link(link: &str) -> Option<(&str, &str, &str)> {
   match re.captures(link) {
     Some(cap) => {
       let sid = cap.get(1);
-      if let None = sid {
-        return None;
-      }
+      sid?;
       let mode = cap.get(2);
-      if let None = mode {
-        return None;
-      }
+      mode?;
       let bid = cap.get(3);
-      if let None = bid {
-        return None;
-      }
+      bid?;
 
       let sid = sid.unwrap().as_str();
       let bid = bid.unwrap().as_str();

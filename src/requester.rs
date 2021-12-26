@@ -18,7 +18,7 @@ pub async fn get_beatmaps<'a>(
 
 pub async fn get_beatmaps_from_link(k: &str, link: &str) -> Result<Vec<beatmaps::BeatMap>> {
   let result = utils::parse_from_link(link);
-  if let None = result {
+  if result.is_none() {
     bail!("Invalid URL {}", link);
   }
   let result = result.unwrap();
@@ -30,13 +30,13 @@ pub async fn get_beatmaps_from_link(k: &str, link: &str) -> Result<Vec<beatmaps:
     _ => "0",
   };
   log::trace!("query params: {:#?}", result);
-  get_beatmaps(k, mode, &result.0, &result.2).await
+  get_beatmaps(k, mode, result.0, result.2).await
 }
 
 pub async fn get_users<'a>(k: &'a str, u: &'a str) -> Result<Vec<user::User>> {
   let api_url = format!("{}/{}", super::API_END_POINT, "get_user");
   let url = Url::parse_with_params(&api_url, vec![("k", k), ("u", u)])
-    .with_context(|| format!("Fail to parse params"))?;
+    .with_context(|| "Fail to parse params".to_string())?;
 
   let resp = get(url.as_str())
     .await?

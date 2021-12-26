@@ -28,7 +28,7 @@ pub struct ErrorResp {
 
 impl ErrorResp {
   pub fn err(&self) -> &str {
-    return &self.error;
+    &self.error
   }
 }
 
@@ -53,34 +53,33 @@ impl<'a> std::default::Default for BeatmapQuery<'a> {
 
 impl BeatmapQuery<'_> {
   pub fn new<'a>(key: &'a str, mode: &'a str, set: &'a str, beatmap: &'a str) -> BeatmapQuery<'a> {
-    return BeatmapQuery {
+    BeatmapQuery {
       key,
       mode,
       set,
       beatmap,
-    };
+    }
   }
 }
 
 pub async fn get_beatmaps(qry: BeatmapQuery<'_>) -> Result<Response> {
   let beatmap_api_url = format!("{}/{}", super::API_END_POINT, "get_beatmaps");
 
-  let mut params = Vec::new();
-  params.push(("k", qry.key));
+  let mut params = vec![("k", qry.key)];
 
-  if qry.mode.len() == 0 {
+  if qry.mode.is_empty() {
     // default use osu! std mode
     params.push(("m", "0"));
   } else {
     params.push(("m", qry.mode));
   }
 
-  if qry.beatmap.len() != 0 {
+  if !qry.beatmap.is_empty() {
     params.push(("b", qry.beatmap));
   }
 
   // If beatmap id is not provided, try to use set id
-  if qry.beatmap.len() == 0 && qry.set.len() != 0 {
+  if qry.beatmap.is_empty() && !qry.set.is_empty() {
     params.push(("s", qry.set));
   }
 
