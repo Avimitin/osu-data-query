@@ -15,7 +15,7 @@ async fn main() -> Result<(), Error> {
       beatmap_id,
       full_url,
     } => {
-      if full_url != "" {
+      if full_url.is_empty() {
         println!(
           "{:#?}",
           get_beatmaps_from_link(&cfg.api_key, &full_url).await?
@@ -23,7 +23,7 @@ async fn main() -> Result<(), Error> {
         return Ok(());
       }
 
-      if beatmap_set == "" && beatmap_id == "" {
+      if beatmap_set.is_empty() && beatmap_id.is_empty() {
         bail!("You need at lease give one argument about the song")
       }
 
@@ -32,7 +32,7 @@ async fn main() -> Result<(), Error> {
     }
     CommandLineOption::GetUser { user } => {
       let resp = get_users(&cfg.api_key, &user).await?;
-      if resp.len() == 0 {
+      if resp.is_empty() {
         bail!("No result for user: {}", user)
       }
       for u in resp {
@@ -41,12 +41,12 @@ async fn main() -> Result<(), Error> {
     }
     CommandLineOption::DiffUser { users } => {
       let a = get_users(&cfg.api_key, &users[0]).await?;
-      if a.len() == 0 {
+      if a.is_empty() {
         bail!("No result for user: {}", users[0])
       }
 
       let b = get_users(&cfg.api_key, &users[1]).await?;
-      if b.len() == 0 {
+      if b.is_empty() {
         bail!("No result for user: {}", users[1])
       }
       // use the first result to compare
