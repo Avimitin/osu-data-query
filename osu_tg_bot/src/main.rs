@@ -18,8 +18,8 @@ enum Command {
 
 type Cxm = UpdateWithCx<AutoSend<Bot>, Message>;
 
-fn pretty_beatmap_style(bmp: &Vec<BeatMap>) -> String {
-  if bmp.len() < 1 {
+fn pretty_beatmap_style(bmp: &[BeatMap]) -> String {
+  if bmp.is_empty() {
     return String::from("No beatmap");
   }
 
@@ -38,20 +38,20 @@ async fn get_beatmap(cx: &Cxm, link: &str) -> Result<()> {
   let msg = cx
     .answer(format!("Searching information for {}", link))
     .await
-    .with_context(|| format!("Fail to send get beatmap response"))?;
+    .with_context(|| "Fail to send get beatmap response".to_string())?;
 
   match get_beatmaps_from_link(&APP_CONFIG.api_key, link).await {
     Ok(bmp) => {
       cx.requester
         .edit_message_text(msg.chat_id(), msg.id, pretty_beatmap_style(&bmp))
         .await
-        .with_context(|| format!("Fail to send beatmaps information back"))?;
+        .with_context(|| "Fail to send beatmaps information back".to_string())?;
     }
     Err(e) => {
       cx.requester
         .edit_message_text(msg.chat_id(), msg.id, format!("{}", e))
         .await
-        .with_context(|| format!("Fail to send beatmaps information back"))?;
+        .with_context(|| "Fail to send beatmaps information back".to_string())?;
     }
   }
 
@@ -83,6 +83,6 @@ async fn run() {
 
   let bot = Bot::from_env().auto_send();
 
-  let bot_name: String = format!("OSU Bot");
+  let bot_name: String = "OSU Bot".to_string();
   teloxide::commands_repl(bot, bot_name, answer).await;
 }
