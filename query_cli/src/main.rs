@@ -1,3 +1,4 @@
+mod config;
 use anyhow::{bail, Error};
 use osu_query::prelude::*;
 
@@ -6,7 +7,7 @@ async fn main() -> Result<(), Error> {
   let opt = CommandLineOption::from_args();
   pretty_env_logger::init();
 
-  let cfg: AppConfig = confy::load("osu-query")?;
+  let cfg: config::AppConfig = confy::load("osu-query")?;
 
   match opt {
     CommandLineOption::GetBeatmap {

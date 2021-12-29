@@ -1034,6 +1034,7 @@ dependencies = [
  "log",
  "osu_query",
  "pretty_env_logger",
+ "serde",
  "teloxide",
  "tokio",
 ]
@@ -1240,6 +1241,7 @@ dependencies = [
  "log",
  "osu_query",
  "pretty_env_logger",
+ "serde",
  "structopt",
  "tabled",
  "tokio",

@@ -2,6 +2,12 @@ use anyhow::{Context, Result};
 use lazy_static::lazy_static;
 use osu_query::{beatmaps::BeatMap, prelude::*};
 use teloxide::{prelude::*, utils::command::BotCommand};
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Debug, Default)]
+struct AppConfig {
+    api_key: String,
+}
 
 lazy_static! {
   static ref APP_CONFIG: AppConfig = confy::load("osu-query").unwrap();
