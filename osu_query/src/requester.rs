@@ -8,7 +8,11 @@ pub async fn get_beatmaps<'a>(
   s: &'a str,
   b: &'a str,
 ) -> Result<Vec<beatmaps::BeatMap>> {
-  let res = beatmaps::get_beatmaps(beatmaps::BeatmapQuery::new(k, m, s, b)).await?;
+  let res = beatmaps::BeatmapQuery::new(k)
+                                  .mode(m)
+                                  .set(s)
+                                  .beatmap(b)
+                                  .query().await?;
 
   match res {
     beatmaps::Response::SuccResp(b) => Ok(b),
