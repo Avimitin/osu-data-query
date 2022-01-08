@@ -35,57 +35,56 @@ impl ErrorResp {
 #[derive(Debug)]
 pub struct BeatmapQuery<'a> {
   pub mode: &'a str,
-  pub set: &'a str,
-  pub beatmap: &'a str,
+  pub set: Option<String>,
+  pub beatmap: Option<String>,
   key: &'a str,
 }
 
-impl<'a> std::default::Default for BeatmapQuery<'a> {
-  fn default() -> Self {
-    BeatmapQuery {
-      key: "",
-      mode: "0",
-      set: "",
-      beatmap: "",
-    }
-  }
-}
-
-impl BeatmapQuery<'_> {
-  pub fn new<'a>(key: &'a str, mode: &'a str, set: &'a str, beatmap: &'a str) -> BeatmapQuery<'a> {
-    BeatmapQuery {
-      key,
-      mode,
-      set,
-      beatmap,
-    }
-  }
-}
-
-pub async fn get_beatmaps(qry: BeatmapQuery<'_>) -> Result<Response> {
-  let beatmap_api_url = format!("{}/{}", super::API_END_POINT, "get_beatmaps");
-
-  let mut params = vec![("k", qry.key)];
-
-  if qry.mode.is_empty() {
-    // default use osu! std mode
-    params.push(("m", "0"));
-  } else {
-    params.push(("m", qry.mode));
+impl<'a> BeatmapQuery<'a> {
+  pub fn new(key: &'a str) -> Self {
+      Self {
+          key,
+          mode: "0",
+          set: None,
+          beatmap: None,
+      }
   }
 
-  if !qry.beatmap.is_empty() {
-    params.push(("b", qry.beatmap));
+  pub fn set(mut self, set_id: impl Into<String>) -> Self {
+      self.set = Some(set_id.into());
+      self
   }
 
-  // If beatmap id is not provided, try to use set id
-  if qry.beatmap.is_empty() && !qry.set.is_empty() {
-    params.push(("s", qry.set));
+  pub fn mode(mut self, mode: &'a str) -> Self {
+      self.mode = mode;
+      self
   }
 
-  let url = Url::parse_with_params(&beatmap_api_url, &params)
-    .with_context(|| format!("fail to build url with param: {:?}", qry))?;
+  pub fn beatmap(mut self, bid: impl Into<String>) -> Self {
+      self.beatmap = Some(bid.into());
+      self
+  }
 
-  let resp = reqwest::get(url).await?.json::<Response>().await?;
-  Ok(resp)
+  pub async fn query(self) -> Result<Response> {
+      let beatmap_api_url = format!("{}/{}", super::API_END_POINT, "get_beatmaps");
+
+      let mut params = vec![("k", self.key), ("m", self.mode)];
+
+      if let Some(bid) =  &self.beatmap {
+        params.push(("b", &bid));
+      }
+
+      // If beatmap id is not provided, try to use set id
+      if self.beatmap.is_none() {
+        if let Some(sid) = &self.set {
+            params.push(("s", &sid));
+        }
+      }
+
+      let url = Url::parse_with_params(&beatmap_api_url, &params)
+        .with_context(|| format!("fail to build url with param: {:?}", self))?;
+
+      let resp = reqwest::get(url).await?.json::<Response>().await?;
+      Ok(resp)
+  }
 }
