@@ -16,10 +16,13 @@ async fn main() -> Result<(), Error> {
             beatmap_id,
             full_url,
         } => {
-            if full_url.is_empty() {
+            if !full_url.is_empty() {
                 println!(
                     "{:#?}",
-                    get_beatmaps_from_link(&cfg.api_key, &full_url).await?
+                    BeatmapQuery::from(&cfg.api_key, &full_url)
+                        .unwrap()
+                        .query().await?
+                        .result()?
                 );
                 return Ok(());
             }
@@ -28,7 +31,11 @@ async fn main() -> Result<(), Error> {
                 bail!("You need at lease give one argument about the song")
             }
 
-            let resp = get_beatmaps(&cfg.api_key, &mode, &beatmap_set, &beatmap_id).await?;
+            let resp = BeatmapQuery::new(&cfg.api_key)
+                .mode(&mode)
+                .set(&beatmap_set)
+                .beatmap(&beatmap_id)
+                .query().await?;
             println!("{:?}", resp);
         }
         CommandLineOption::GetUser { user } => {
