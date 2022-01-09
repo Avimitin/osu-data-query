@@ -1,6 +1,7 @@
 use anyhow::{Context, Result};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
+use regex::Regex;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct BeatMap {
@@ -38,7 +39,6 @@ pub struct BeatmapQuery<'a> {
     set: Option<String>,
     beatmap: Option<String>,
     key: &'a str,
-    link: Option<String>,
 }
 
 impl<'a> BeatmapQuery<'a> {
@@ -48,7 +48,6 @@ impl<'a> BeatmapQuery<'a> {
             mode: "0",
             set: None,
             beatmap: None,
-            link: None,
         }
     }
 
@@ -67,9 +66,24 @@ impl<'a> BeatmapQuery<'a> {
         self
     }
 
-    pub fn link(mut self, link: impl Into<String>) -> Self {
-        self.link = Some(link.into());
-        self
+    pub fn from(key: &'a str, link: &'a str) -> Option<Self> {
+        let re = Regex::new(r"https://osu.ppy.sh/beatmapsets/([0-9]+)#([a-z]+)/([0-9]+)").unwrap();
+
+        if let Some(cap) = re.captures(link) {
+            let sid = cap.get(1)?.as_str();
+            let mode = cap.get(2)?.as_str();
+            let bid = cap.get(3)?.as_str();
+            Some(
+                Self {
+                    key,
+                    mode,
+                    set: Some(sid.into()),
+                    beatmap: Some(bid.into()),
+                }
+            )
+        } else {
+            None
+        }
     }
 
     pub async fn query(self) -> Result<Response> {
