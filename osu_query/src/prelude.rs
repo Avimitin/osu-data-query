@@ -1,1 +1,2 @@
-pub use crate::requester::{get_beatmaps, get_beatmaps_from_link, get_users};
+pub use crate::requester::get_users;
+pub use crate::beatmaps::BeatmapQuery;

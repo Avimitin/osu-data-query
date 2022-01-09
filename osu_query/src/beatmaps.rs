@@ -1,4 +1,4 @@
-use anyhow::{Context, Result};
+use anyhow::{Context, Result, anyhow};
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
 use regex::Regex;
@@ -30,6 +30,15 @@ pub struct ErrorResp {
 impl ErrorResp {
     pub fn err(&self) -> &str {
         &self.error
+    }
+}
+
+impl Response {
+    pub fn result(self) -> Result<Vec<BeatMap>> {
+        match self {
+            Self::SuccResp(bms) => Ok(bms),
+            Self::ErrorResp(e) => Err(anyhow!{"{}", e.err()}),
+        }
     }
 }
 
