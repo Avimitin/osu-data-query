@@ -51,6 +51,20 @@ pub struct BeatmapQuery<'a> {
 }
 
 impl<'a> BeatmapQuery<'a> {
+    /// Create a default query parameters.
+    ///
+    /// Use the successive builder function to construct parameters for quering
+    /// the beatmaps.
+    ///
+    /// # Example
+    ///
+    /// Basic usage:
+    ///
+    /// ```
+    /// let params = BeatmapQuery::new("bvja7891guakdh")
+    ///                           .set("3271931")
+    ///                           .mode("0");
+    /// ```
     pub fn new(key: &'a str) -> Self {
         Self {
             key,
